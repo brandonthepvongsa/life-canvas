@@ -1,33 +1,51 @@
 /*
  * name: main.js
- * Authors: Tanner Garrett, Brandon Thepvongsa
+ * Authors: Brandon Thepvongsa
  * Description: JavaScript used to create the functionality of Picture Projector
 */
 
 $(document).ready(function() {
 	$("#dboxButton").on("click", connectDropbox);
-    $("#gdriveButton").on("click", connectDrive);
-	//initialize context menu
-	$.contextMenu({
-            selector: '.context-menu-one',
-            items: {
-                "edit": {
-                	name: "Select a new picture to represent this folder",
-                	callback: function(e) {
-                		var element = $(this);
-                		var guid = element.attr('data-guid');
-                		var url = prompt("Paste a URL for the picture to represent this folder", "http://example.com/yourphoto.png");
-                		im.setAssociationNamespaceAttribute('picture', url, guid, 'picture-projector');
-                		element.css({
-                			'background-image': 'url(' + url + ')',
-                			'background-size' : 'cover'
-                		});
-                		saveMirror();
-                	}
-                }
-            }
-        });
-});
+  $("#gdriveButton").on("click", connectDrive);
+
+	$("#modal-submit").on("click", setPicture);
+
+		//initialize context menu
+		$.contextMenu({
+			selector: '.context-menu-one',
+			items: {
+				"open": {
+					name: " Open Subfolder",
+					callback: function(e) {
+						var elementGUID = $(this).attr('data-guid');
+						if(im.isAssociationAssociatedItemGrouping(elementGUID)) {
+							navigateMirror(elementGUID);
+						}
+					},
+					icon: function(opt, $itemElement, itemKey, item){
+						// Set the content to the menu trigger selector and add an bootstrap icon to the item.
+						$itemElement.html('<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Open folder' + opt.selector);
+
+						// Add the context-menu-icon-updated class to the item
+						return 'context-menu-icon-updated';
+					},
+					// Disabled if the element is a non-grouping item
+					disabled: function() {return !im.isAssociationAssociatedItemGrouping($(this).attr('data-guid')); }
+				},
+				"edit": {
+					name: "Select a new picture to represent this folder",
+					callback: function(e) {
+						var element = $(this);
+						var guid = element.attr('data-guid');
+
+						selectAssociation(guid);
+						$('#dialog').modal('show');
+					}
+				},
+
+			}
+		}); // END CONTEXT MENU
+	});
 
 var
 	im,
@@ -245,6 +263,13 @@ function printAssociations(associationList, div) {
 	for(var i = 0; i < associationList.length; i++) {
 		var appendingObject = associationMarkup(associationList[i]);
 		div.append(appendingObject);
+
+		// If this assoc has a zIndex value and it's higher than the current, set the current to it
+		var assocZIndex = im.getAssociationNamespaceAttribute('zIndex', associationList[i], 'picture-projector');
+		if(assocZIndex && (highestZIndex < assocZIndex)) {
+			highestZIndex = assocZIndex;
+			//console.log(assocZIndex);
+		}
 	}
 }
 
@@ -393,7 +418,7 @@ function handleAssocStyle(assoc) {
 	if(assoc.xCord || assoc.yCord) {
 		result += "left: " + assoc.xCord + "px;";
 		result += "top: " + assoc.yCord + "px;";
-		result += "z-index: " + assoc.zIndex + "px;";
+		result += "z-index: " + assoc.zIndex + ";";
 		result += "position: absolute;";
 
 	} else {
@@ -409,64 +434,58 @@ function handleAssocStyle(assoc) {
 	return result;
 }
 
-// // INTERACT.JS - draggable related code
-// // target elements with the "draggable" class
-// interact('.draggable')
-//   .draggable({
-//     // enable inertial throwing
-//     inertia: false,
-//     // keep the element within the area of it's parent
-//     restrict: {
-//       restriction: "parent",
-//       endOnly: false,
-//       elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-//     },
-//
-//
-//
-//     // call this function on every dragmove event
-//     onmove: dragMoveListener,
-//     // call this function on every dragend event
-//     onend: function (event) {
-//       var rect = getOffsetRect(event.target);
-//       //$scope.offsetLeft = 'Offset left: ' + rect.left;
-//       //$scope.offsetTop = 'Offset top: ' + rect.top;
-//
-//       selectedAssociation.xCord = rect.left;
-//       selectedAssociation.yCord = rect.top;
-//       // selectedAssoc.zIndex = highestZIndex;
-//
-//       //$scope.selectedAssoc.moved = true;
-// 		setAssociation(selectedAssociation);
-//       saveMirror();
-//     }
-//   })
-//
-// 	// Handles a click on the folder, navigates to the
-// 	// folders guid, shows the loading spinner
-// 	.on('tap', function (event) {
-// 		var guid = event.target.getAttribute('data-guid');
-// 		if(event.button != 2) {
-// 		   	navigateMirror(guid);
-// 		}
-// 	});
+function setPicture() {
+	var url = $("#modal-input").val();
 
+	if(url) {
+		im.setAssociationNamespaceAttribute('picture', url, selectedAssociation.guid, 'picture-projector');
+
+		var element = $("[data-guid=" + selectedAssociation.guid + "]");
+		element.css({
+			'background-image': 'url(' + url + ')',
+			'background-size' : 'cover'
+		});
+		saveMirror();
+
+		$("#modal-input").val('');
+	}
+}
+
+// Interact.js related code
+// Sets functionality for dragging, dragend, and clicks of associations
 interact('.draggable')
 	.draggable({
-		// restrict: {
-		// 	restriction: 'parent'
-		// },
 		max: Infinity,
 		onmove: dragMoveListener,
-		autoScroll: {
-			container: document.getElementById('canvas'),
-			margin: 5000,
-			speed: 1000,
-			//distance: 500
-		}
-	});
+		// autoScroll: {
+		// 	container: document.getElementById('canvas'),
+		// 	margin: 5000,
+		// 	speed: 1000,
+		// },
+		onend: dragEndListener,
+	})
+	// Handles a click on the folder, navigates to the
+	// folders guid, shows the loading spinner
+	.on('tap', onTapListener);
+
+function onTapListener(event) {
+	var guid = event.target.getAttribute('data-guid');
+	if(event.button != 2) {
+		navigateMirror(guid);
+	}
+}
+
+function dragEndListener(event) {
+	var rect = getOffsetRect(event.target);
+
+	selectedAssociation.xCord = rect.left;
+	selectedAssociation.yCord = rect.top;
+	selectedAssociation.zIndex = event.target.getAttribute('zIndex');
 
 
+	setAssociation(selectedAssociation);
+	saveMirror();
+}
 
 
 function dragMoveListener (event) {
@@ -479,32 +498,35 @@ function dragMoveListener (event) {
 	target.style.transform =
 	  'translate(' + x + 'px, ' + y + 'px)';
 
-	// // Bring the element to overlap other elements using zIndex if it's
-	// // not already the element with the highest z-index
-	// if(target.style.zIndex < highestZIndex) {
-	//   highestZIndex++;
-	//   target.style.zIndex = highestZIndex;
-	// }
+	// Bring the element to overlap other elements using zIndex if it's
+	// not already the element with the highest z-index
+	if(highestZIndex == 0 || (target.style.zIndex < highestZIndex)) {
+	  highestZIndex++;
+	  target.style.zIndex = highestZIndex;
+
+		target.setAttribute('zIndex', highestZIndex);
+	}
 
 	// update the position attributes
 	target.setAttribute('data-x', x);
 	target.setAttribute('data-y', y);
+
 }
 
-// Gets the offset of the provided element relative to the canvas and current scroll
+// Finds the position of an element relative to its parent and its parents scroll
 function getOffsetRect(elem) {
-	var box = elem.getBoundingClientRect();
 
-	var body = document.body;
-	var docElem = document.documentElement;
-	var canvasRect = document.getElementById('canvas').getBoundingClientRect();
+	// Jquery select our element
+	var guid = elem.getAttribute('data-guid');
+	var element = $("[data-guid=" + guid + "]");
 
-	// Client scroll
-	var clientTop = docElem.clientTop || body.clientTop || 0;
-	var clientLeft = docElem.clientLeft || body.clientLeft || 0;
+	// Grab the position of the element relative to the parent (does not include scrolling)
+	var relativeLeft = element.position().left;
+	var relativeTop = element.position().top;
 
-	var top  =  box.top - clientTop - canvasRect.top;
-	var left = box.left - clientLeft - canvasRect.left;
+	// Find the position including scrolling by adding in the amount of scrolling
+	var trueLeft = relativeLeft + element.parent().scrollLeft();
+	var trueTop = relativeTop + element.parent().scrollTop();
 
-	return { top: Math.round(top), left: Math.round(left) }
+	return {left: trueLeft, top: trueTop};
 }
