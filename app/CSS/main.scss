@@ -1,0 +1,237 @@
+$icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+// bower:scss
+@import "bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
+// endbower
+
+.browsehappy {
+  margin: 0.2em 0;
+  background: black;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+/* Everything but the jumbotron gets side spacing for mobile first views */
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Custom page header */
+.header {
+  border-bottom: 1px solid #e5e5e5;
+  background: red;
+
+  /* Make the masthead heading the same height as the navigation */
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 40px;
+    padding-bottom: 19px;
+  }
+}
+
+/* Custom page footer */
+.footer {
+  padding-top: 19px;
+  color: #777;
+  border-top: 1px solid #e5e5e5;
+}
+
+.container-narrow > hr {
+  margin: 30px 0;
+}
+
+/* Main marketing message and sign up button */
+.jumbotron {
+  text-align: center;
+  border-bottom: 1px solid #e5e5e5;
+
+  .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+  }
+}
+
+/* Supporting marketing content */
+.marketing {
+  margin: 40px 0;
+
+  p + h4 {
+    margin-top: 28px;
+  }
+}
+
+/* Responsive: Portrait tablets and up 
+@media screen and (min-width: 768px) {
+  .container {
+    max-width: 1080px;
+  }
+
+  /* Remove the padding we set earlier 
+  .header,
+  .marketing,
+  .footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  /* Space out the masthead 
+  .header {
+    margin-bottom: 30px;
+  }
+  /* Remove the bottom border on the jumbotron for visual effect 
+  .jumbotron {
+    border-bottom: 0;
+  }
+} */
+
+
+/**
+Drag and drop file explorer
+**/
+
+#canvas {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 1080px;
+  min-height: 500px;
+  margin: auto;
+  padding: 0;
+  background: url("../images/white_bed_sheet.png") repeat;
+}
+
+.folder {
+  position: relative;
+  display: inline-block;
+  background-size: 100% 100%;
+  width: 100px;
+  height: 100px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer; cursor: hand;
+}
+
+.folder p {
+  margin-top: 43px;
+  text-align: center;
+  color: #373D40;
+}
+
+.position-fixed {
+  position: fixed;
+}
+
+.panel-body {
+  width: 100px;
+  height: 100px;
+  background: black;
+}
+
+.set-background {
+  font-weight: bold;
+}
+
+.strong{ 
+  font-weight: bold;
+}
+
+
+/***
+  DROPDOWN
+  ***/
+.dropdown {
+  z-index: 99999;
+  position: initial;
+}
+
+/*****
+TOOLBAR PANEL
+*******/
+.toolbar {
+  color: blue;
+}
+
+/***
+  BREADCRUMBS
+    ***/
+
+.breadcrumb {
+  padding: 0;
+  margin: 0;
+}
+
+#breadcrumbs a:hover {
+  cursor: pointer;
+}
+
+.clear {
+  clear: both;
+}
+
+
+/***
+  SPINNER
+  ***/
+
+.spinner .ng-animate { -webkit-animation: none 0s; }
+
+.spinner {
+  width: 50px;
+  height: 30px;
+  text-align: center;
+  font-size: 10px;
+  position: fixed;
+  bottom: 0; left: 0;
+}
+
+.spinner > div {
+  background-color: #333;
+  height: 100%;
+  width: 6px;
+  display: inline-block;
+  
+  -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+  animation: stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+.spinner .rect3 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+.spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+.spinner .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+
+@-webkit-keyframes stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes stretchdelay {
+  0%, 40%, 100% { 
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% { 
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
+}

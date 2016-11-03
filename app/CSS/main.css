@@ -1,0 +1,117 @@
+h1 {
+	font-family: 'Roboto slab', serif;
+	text-align: center;
+}
+
+span.association-grouping, span.association-file {
+	cursor: pointer;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.italic {
+	font-style: italic;
+}
+
+.association-row {
+	padding: 7px 0 7px 0;
+}
+
+.association-row p {
+	margin: 0;
+}
+
+.association-row:hover {
+	background: #e0e0e0;
+}
+
+input {
+	padding: 0;
+	margin: 0;
+}
+
+.glyphicon-file {
+	color: #64ABFC;
+}
+
+.selected-association {
+	border: 1px dashed #727272;
+	background: #e0e0e0;
+}
+
+h3.folder-name {
+	text-align: center;
+}
+
+#toolbar {
+	margin-bottom: 20px
+}
+
+
+.jumbotron {
+	margin-top: 30px;
+	text-align: center;
+}
+
+/**
+Drag and drop file explorer
+**/
+
+#canvas {
+  position: relative;
+  display: block;
+	overflow-x: auto;
+	overflow-y: hidden;
+  min-width: 1080px;
+  min-height: 500px;
+  margin: auto;
+  padding: 0;
+  background: url("../images/gridme.png") repeat;
+}
+
+.folder {
+  position: relative;
+  display: inline-block;
+  background-size: 100% 100%;
+  width: 100px;
+  height: 100px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer; cursor: hand;
+}
+
+.folder p {
+  margin-top: 43px;
+  text-align: center;
+  color: #373D40;
+}
+
+.position-fixed {
+  position: fixed;
+}
+
+.panel-body {
+  width: 100px;
+  height: 100px;
+  background: black;
+}
+
+.set-background {
+  font-weight: bold;
+}
+
+.strong{
+  font-weight: bold;
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.panel {
+	display:none;
+}
