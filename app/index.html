@@ -23,11 +23,20 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<h4 class="modal-title">Enter the URL of the image you'd like to use.</h4>
+						<h4 class="modal-title">Select an image to represent this folder.</h4>
 					</div>
 					<div class="modal-body">
-						<p>There will be a preview of your selected image here soon.</p>
-						<input id="modal-input" type="text" class="form-control" placeholder="http://example.com" aria-describedby="input url">
+						<div class="panel panel-default">
+						  <div class="panel-heading">Select an image from inside this folder...</div>
+						  <div id="modal-browser" class="panel-body"></div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">Or use a direct link</div>
+							<div class="panel-body">
+								<input id="modal-input" type="text" class="form-control" placeholder="http://example.com" aria-describedby="input url">
+							</div>
+						</div>
+
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -38,7 +47,6 @@
 			</div>
 		</div>
 		<main class="container">
-			<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#dialog">Open Modal</button>
 			<div class="jumbotron">
 				<p>Where's the information you would like to work with?</p>
 				<button class="btn btn-default" id="dboxButton">Dropbox</button>

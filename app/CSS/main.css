@@ -92,12 +92,6 @@ Drag and drop file explorer
   position: fixed;
 }
 
-.panel-body {
-  width: 100px;
-  height: 100px;
-  background: black;
-}
-
 .set-background {
   font-weight: bold;
 }

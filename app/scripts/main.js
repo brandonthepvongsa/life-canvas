@@ -39,6 +39,7 @@ $(document).ready(function() {
 						var guid = element.attr('data-guid');
 
 						selectAssociation(guid);
+						openModalMirror(guid);
 						$('#dialog').modal('show');
 					}
 				},
@@ -287,7 +288,7 @@ function createClickHandlers() {
 
 // Selects an itemMirror associaton for further editing
 function selectAssociation(guid) {
-	selectedAssociation = new association(guid);
+	selectedAssociation = new Association(guid, im);
 }
 
 
@@ -329,6 +330,20 @@ function navigateMirror(guid) {
 		}
 	});
 
+}
+
+// Attempts to open association as new ItemMirror view in modal
+function openModalMirror(guid) {
+	var pictureBrowser = $("#modal-browser");
+	pictureBrowser.html("loading images...");
+	// Create a new ItemMirror object for the requested modal
+	im.createItemMirrorForAssociatedGroupingItem(guid, function(error, newMirror) {
+		if(!error) {
+			refreshModal(newMirror);
+		} else {
+			console.log("Error opening mirror for modal");
+		}
+	});
 }
 
 // Navigates and refreshes the display to the previous mirror
@@ -381,13 +396,14 @@ function printToolbar() {
 
 // Abstraction of a picture projector itemMirror association. Includes
 // namespace attributes dealing with the positioning and display of an association.
-function association(guid) {
+function Association(guid, mirror) {
 	this.guid = guid;
-	this.displayText = im.getAssociationDisplayText(guid);
-	this.picture = im.getAssociationNamespaceAttribute('picture', guid, 'picture-projector');
-	this.zIndex = im.getAssociationNamespaceAttribute('zIndex', guid, 'picture-projector');
-	this.yCord = im.getAssociationNamespaceAttribute('yCord', guid, 'picture-projector');
-	this.xCord = im.getAssociationNamespaceAttribute('xCord', guid, 'picture-projector');
+	this.displayText = mirror.getAssociationDisplayText(guid);
+	this.localItem = mirror.getAssociationLocalItem(guid);
+	this.picture = mirror.getAssociationNamespaceAttribute('picture', guid, 'picture-projector');
+	this.zIndex = mirror.getAssociationNamespaceAttribute('zIndex', guid, 'picture-projector');
+	this.yCord = mirror.getAssociationNamespaceAttribute('yCord', guid, 'picture-projector');
+	this.xCord = mirror.getAssociationNamespaceAttribute('xCord', guid, 'picture-projector');
 }
 
 // Sets an association in itemMirror to equal an abstracted association
@@ -402,7 +418,7 @@ function setAssociation(assoc) {
 // Returns the markup for an association to be printed to the screen
 // Differentiates between a groupingItem and nonGroupinItem via icon
 function associationMarkup(guid) {
-	var assoc = new association(guid);
+	var assoc = new Association(guid, im);
 
 	var markup = "<div id='" + assoc.displayText + "' data-guid='" + guid + "' title='" + assoc.displayText + "' class='folder draggable panel-default position-fixed association context-menu-one' style='" + handleAssocStyle(assoc) + "'>";
 	markup += "<p data-guid='" + guid + "'>" + assoc.displayText.substring(0, 11) + "</p>";
@@ -449,6 +465,45 @@ function setPicture() {
 
 		$("#modal-input").val('');
 	}
+}
+
+function refreshModal(inputMirror) {
+	var pictureBrowser = $("#modal-browser");
+
+	var associations = inputMirror.listAssociations();
+	var currentAssociation;
+
+	// variable to check if folder contains images, decides whether we print images or
+	// display that the folder contains no supported images.
+	var containsImages = false;
+
+	// Store all our images here
+	var imageList = [];
+
+	// Loop through all the associations to check for images
+	for(var i = 0; i < associations.length; i++) {
+		currentAssociation = new Association(associations[i], inputMirror);
+		if(checkImageURL(currentAssociation.localItem)){
+			// we've found at least one image
+			containsImages = true;
+			imageList.push(currentAssociation.localItem);
+		}
+	}
+
+	if(containsImages) {
+		var resultString = "";
+		for(var i=0; i<imageList.length; i++) {
+			resultString += imageList[i] + "<br />";
+		}
+		pictureBrowser.html(resultString);
+	} else {
+		pictureBrowser.html("this folder contains no supported images.");
+	}
+}
+
+// Checks if a given string ends in a supported file type
+function checkImageURL(url) {
+    return(url.match(/\.(gif|png|jpg|jpeg)$/) != null);
 }
 
 // Interact.js related code
