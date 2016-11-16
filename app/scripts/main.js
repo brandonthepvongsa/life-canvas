@@ -315,6 +315,8 @@ function refreshMirror() {
 
 // Attempts to  and display a new itemMirror association
 function navigateMirror(guid) {
+	$("#canvas").html("<h1>loading...</h1>");
+
 	im.createItemMirrorForAssociatedGroupingItem(guid, function(error, newMirror) {
 
 		if(!error) {
@@ -526,6 +528,7 @@ interact('.draggable')
 function onTapListener(event) {
 	var guid = event.target.getAttribute('data-guid');
 	if(event.button != 2) {
+
 		navigateMirror(guid);
 	}
 }
