@@ -1,5 +1,5 @@
-# FolderDoc
-Show any folder as a document with basic formatting, pictures and running text. Share with friends. Publish to the world.
+# LifeCanvas
+Visualize your folders and data stored in the cloud as pictures on a canvas. Organize them relationally to eachother in time and space.
 
 # Create and import a config.js file
 
